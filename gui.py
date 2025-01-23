@@ -18,7 +18,11 @@ def run_gui():
 
             # Map soil type to numeric value
             soil_mapping = {"Sandy": 0, "Loamy": 1, "Black": 2, "Red": 3, "Clayey": 4}
-            soil_numeric = soil_mapping[soil_type]
+            soil_numeric = soil_mapping.get(soil_type, -1)  # Default to -1 for invalid inputs
+
+            # Validate soil_numeric
+            if soil_numeric == -1:
+                raise ValueError("Invalid soil type selected.")
 
             # Make prediction
             features = [temperature, humidity, moisture, nitrogen, potassium, phosphorous, soil_numeric]
@@ -33,40 +37,59 @@ def run_gui():
     root = tk.Tk()
     root.title("Fertilizer Impact Prediction")
 
-    tk.Label(root, text="Temperature:").grid(row=0, column=0)
-    temp_entry = tk.Entry(root)
-    temp_entry.grid(row=0, column=1)
+    # Set the size of the GUI window (Width x Height)
+    window_width, window_height = 500, 400
+    root.geometry(f"{window_width}x{window_height}")
 
-    tk.Label(root, text="Humidity:").grid(row=1, column=0)
-    humid_entry = tk.Entry(root)
-    humid_entry.grid(row=1, column=1)
+    # Center the window on the screen
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    position_top = (screen_height // 2) - (window_height // 2)
+    position_right = (screen_width // 2) - (window_width // 2)
+    root.geometry(f"{window_width}x{window_height}+{position_right}+{position_top}")
 
-    tk.Label(root, text="Moisture:").grid(row=2, column=0)
-    moist_entry = tk.Entry(root)
-    moist_entry.grid(row=2, column=1)
+    # Create a frame to center all widgets
+    frame = tk.Frame(root)
+    frame.pack(expand=True)  # Center the frame in the window
 
-    tk.Label(root, text="Nitrogen:").grid(row=3, column=0)
-    nitrogen_entry = tk.Entry(root)
-    nitrogen_entry.grid(row=3, column=1)
+    # Add form widgets inside the frame
+    tk.Label(frame, text="Temperature:").grid(row=0, column=0, padx=5, pady=5)
+    temp_entry = tk.Entry(frame)
+    temp_entry.grid(row=0, column=1, padx=5, pady=5)
 
-    tk.Label(root, text="Potassium:").grid(row=4, column=0)
-    potassium_entry = tk.Entry(root)
-    potassium_entry.grid(row=4, column=1)
+    tk.Label(frame, text="Humidity:").grid(row=1, column=0, padx=5, pady=5)
+    humid_entry = tk.Entry(frame)
+    humid_entry.grid(row=1, column=1, padx=5, pady=5)
 
-    tk.Label(root, text="Phosphorous:").grid(row=5, column=0)
-    phosphorous_entry = tk.Entry(root)
-    phosphorous_entry.grid(row=5, column=1)
+    tk.Label(frame, text="Moisture:").grid(row=2, column=0, padx=5, pady=5)
+    moist_entry = tk.Entry(frame)
+    moist_entry.grid(row=2, column=1, padx=5, pady=5)
 
-    tk.Label(root, text="Soil Type:").grid(row=6, column=0)
-    soil_type_var = tk.StringVar(value="Sandy")
-    tk.OptionMenu(root, soil_type_var, "Sandy", "Loamy", "Black", "Red", "Clayey").grid(row=6, column=1)
+    tk.Label(frame, text="Nitrogen:").grid(row=3, column=0, padx=5, pady=5)
+    nitrogen_entry = tk.Entry(frame)
+    nitrogen_entry.grid(row=3, column=1, padx=5, pady=5)
 
-    tk.Button(root, text="Predict", command=predict_action).grid(row=7, column=0, columnspan=2)
+    tk.Label(frame, text="Potassium:").grid(row=4, column=0, padx=5, pady=5)
+    potassium_entry = tk.Entry(frame)
+    potassium_entry.grid(row=4, column=1, padx=5, pady=5)
 
-    result_label = tk.Label(root, text="")
-    result_label.grid(row=8, column=0, columnspan=2)
+    tk.Label(frame, text="Phosphorous:").grid(row=5, column=0, padx=5, pady=5)
+    phosphorous_entry = tk.Entry(frame)
+    phosphorous_entry.grid(row=5, column=1, padx=5, pady=5)
+
+    tk.Label(frame, text="Soil Type:").grid(row=6, column=0, padx=5, pady=5)
+    soil_type_var = tk.StringVar(frame)
+    soil_type_var.set("Select Soil Type")
+    soil_type_dropdown = tk.OptionMenu(frame, soil_type_var, "Sandy", "Loamy", "Black", "Red", "Clayey")
+    soil_type_dropdown.grid(row=6, column=1, padx=5, pady=5)
+
+    predict_button = tk.Button(frame, text="Predict", command=predict_action)
+    predict_button.grid(row=7, columnspan=2, pady=10)
+
+    result_label = tk.Label(frame, text="", font=("Helvetica", 14))
+    result_label.grid(row=8, columnspan=2, pady=10)
 
     root.mainloop()
 
-# Uncomment below to test the GUI when you call this script
-# run_gui()
+if __name__ == "__main__":
+    run_gui()
